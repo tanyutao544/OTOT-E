@@ -8,10 +8,14 @@ var contactSchema = mongoose.Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     gender: String,
-    phone: String,
+    phone: {
+        type: String,
+        unique: true
+    },
     create_date: {
         type: Date,
         default: Date.now
