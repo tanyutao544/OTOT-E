@@ -15,14 +15,17 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 // Connect to Mongoose and set connection variable
-mongoose.connect('mongodb://localhost/resthub', { useNewUrlParser: true});
-var db = mongoose.connection;
 
-// Added check for DB connection
-if(!db)
-    console.log("Error connecting db")
-else
-    console.log("Db connected successfully")
+require ('dotenv'). config ()
+mongoose
+    .connect(process.env.DATABASE, { 
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    }).then(() => {
+            console.log("DB CONNECTED");
+    });
+
+let db = mongoose.connection;
 
 // Setup server port
 var port = process.env.PORT || 8080;

@@ -2,8 +2,8 @@
 // Import contact model
 Contact = require('./contactModel');
 // Handle index actions
-exports.index = async function (req, res) {
-    await Contact.get(function (err, contacts) {
+exports.index = function (req, res) {
+    Contact.get(function (err, contacts) {
         if (err) {
             res.json({
                 status: "error",
@@ -18,8 +18,8 @@ exports.index = async function (req, res) {
     });
 };
 // Handle create contact actions
-exports.new = async function (req, res) {
-    var contact = await new Contact();
+exports.new = function (req, res) {
+    var contact = new Contact();
     contact.name = req.body.name ? req.body.name : contact.name;
     contact.gender = req.body.gender;
     contact.email = req.body.email;
@@ -35,8 +35,8 @@ res.json({
     });
 };
 // Handle view contact info
-exports.view = async function (req, res) {
-    await Contact.findById(req.params.contact_id, function (err, contact) {
+exports.view = function (req, res) {
+    Contact.findById(req.params.contact_id, function (err, contact) {
         if (err)
             res.send(err);
         res.json({
@@ -46,8 +46,8 @@ exports.view = async function (req, res) {
     });
 };
 // Handle update contact info
-exports.update = async function (req, res) {
-    await Contact.findById(req.params.contact_id, function (err, contact) {
+exports.update = function (req, res) {
+    Contact.findById(req.params.contact_id, function (err, contact) {
         if (err)
             res.send(err);
     contact.name = req.body.name ? req.body.name : contact.name;
@@ -66,8 +66,8 @@ exports.update = async function (req, res) {
     });
 };
 // Handle delete contact
-exports.delete = async function (req, res) {
-    await Contact.remove({
+exports.delete = function (req, res) {
+    Contact.remove({
         _id: req.params.contact_id
     }, function (err, contact) {
         if (err)
