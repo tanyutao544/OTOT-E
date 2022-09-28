@@ -10,7 +10,9 @@ exports.index = function (req, res) {
                 message: err,
             });
         }
-        res.json({
+        res
+        .status(200)
+        .json({
             status: "success",
             message: "Contacts retrieved successfully",
             data: contacts
@@ -30,7 +32,9 @@ exports.new = function (req, res) {
         contact.save(function (err) {
             if (err)
                 res.json(err);
-            res.json({
+            res
+            .status(201)
+            .json({
                 message: 'New contact created!',
                 data: contact
             });
@@ -46,7 +50,9 @@ exports.view = function (req, res) {
     Contact.findById(req.params.contact_id, function (err, contact) {
         if (err)
             res.send(err);
-        res.json({
+        res
+        .status(200)
+        .json({
             message: 'Contact details loading..',
             data: contact
         });
@@ -66,7 +72,9 @@ exports.update = function (req, res) {
             contact.save(function (err) {
                 if (err)
                     res.json(err);
-                res.json({
+                res
+                .status(200)
+                .json({
                     message: 'Contact Info updated',
                     data: contact
                 });
