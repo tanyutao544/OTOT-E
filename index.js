@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 // Connect to Mongoose and set connection variable
 
 require ('dotenv'). config ()
-let mongoDB =
+let mongoDB = 
   process.env.ENV == "PROD"
     ? process.env.DATABASE
     : process.env.TEST_DATABASE;
