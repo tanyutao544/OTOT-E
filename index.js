@@ -17,15 +17,15 @@ app.use(bodyParser.json());
 // Connect to Mongoose and set connection variable
 
 require ('dotenv'). config ()
-mongoose
-    .connect(process.env.DATABASE, { 
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    }).then(() => {
-            console.log("DB CONNECTED");
-    });
+let mongoDB =
+  process.env.ENV == "PROD"
+    ? process.env.DATABASE
+    : process.env.TEST_DATABASE;
+
+mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 
 let db = mongoose.connection;
+db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 // Setup server port
 var port = process.env.PORT || 8080;
@@ -39,3 +39,5 @@ app.use('/api', apiRoutes);
 app.listen(port, function () {
     console.log("Running RestHub on port " + port);
 });
+
+export default app;
