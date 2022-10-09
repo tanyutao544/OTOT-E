@@ -67,8 +67,9 @@ exports.view = function (req, res) {
     });
 };
 // Handle update contact info
-exports.update = function (req, res) {
-    if(!Contact.exists( {$or: [{ email: req.body.email}, {phone: req.body.phone }]})) {
+exports.update = async function (req, res) {
+    let exists = await Contact.exists( {$or: [{ email: req.body.email}, {phone: req.body.phone }]});
+    if(!exists) {
         Contact.findById(req.params.contact_id, function (err, contact) {
             if (err)
                 res.send(err);
@@ -77,16 +78,13 @@ exports.update = function (req, res) {
             contact.email = req.body.email;
             contact.phone = req.body.phone;
         // save the contact and check for errors
-            contact.save(function (err) {
-                if (err)
-                    res.json(err);
-                res
-                .status(200)
-                .json({
-                    message: 'Contact Info updated',
-                    data: contact
-                });
-            });
+            contact.save();
+            return res
+            .status(200)
+            .json({
+                message: 'Contact Info updated',
+                data: contact
+            })
         });
     } else {
         return res
@@ -96,17 +94,14 @@ exports.update = function (req, res) {
 };
 // Handle delete contact
 exports.delete = function (req, res) {
-    if(!req.params.contact_id){
-        return res
-            .status(400)
-            .json({message: "contact id is missing!"})
-    }
     Contact.remove({
         _id: req.params.contact_id
     }, function (err, contact) {
         if (err)
             res.send(err);
-    res.json({
+    res
+    .status(200)
+    .json({
             status: "success",
             message: 'Contact deleted'
         });

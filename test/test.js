@@ -18,9 +18,10 @@ describe('Contacts', () => {
       });        
   });
 /*
-* Test the /GET route on an empty database
+* Test the /GET route
 */
 describe('/GET contacts', () => {
+    //test GET on an empty database
     it('it should GET all the contacts', (done) => {
       chai.request(index)
           .get('/api/contacts')
@@ -31,6 +32,7 @@ describe('/GET contacts', () => {
             done();
           });
     });
+    //test GET on a database with 1 document
     it('it should GET all the contacts', (done) => {
       let contact = new Contacts({name: "John", email: "test@gmail.com", gender: "male", phone: "92992987"})
       contact.save((err, contact) => {
@@ -47,9 +49,10 @@ describe('/GET contacts', () => {
 
 });
 /*
-* Test the /GET route on a database with document
+* Test the /POST route
 */
 describe('/POST contact', () => {
+  //test POST route with missing field
   it('it should not POST a contact without name field', (done) => {
     let contact = {
         email: "test@gmail.com",
@@ -67,6 +70,7 @@ describe('/POST contact', () => {
       });
   });
 
+  //Test POST route with duplicate field
   it('it should not POST a contact with duplicate phone field', (done) => {
     let contact = new Contacts({name: "John", email: "test@gmail.com", gender: "male", phone: "92992987"})
     contact.save((err, contact) => {
@@ -88,6 +92,7 @@ describe('/POST contact', () => {
     });
   });
 
+  //Test successful POST
   it('it should POST a contact', (done) => {
     let contact = {
       name: "john",
@@ -101,12 +106,80 @@ describe('/POST contact', () => {
     .end((err, res) => {
           res.should.have.status(201);
           res.body.should.be.a('object');
-          res.body.should.have.property('message')
+          res.body.should.have.property('message').eql('New contact created!')
       done();
     });
   })
 });
 
+/*
+* Test the /PATCH route
+*/
+describe('/PATCH contact', () => {
+  //Test PATCH route with duplicate phone field
+  it('it should not PATCH a contact with duplicate phone field', (done) => {
+    let contact = new Contacts({name: "John", email: "test@gmail.com", gender: "male", phone: "92992987"})
+    let id = contact.id;
+    contact.save((err, contact) => {
+      contact = {
+        name: "josh",
+        email: "test2@gmail.com",
+        gender: "male",
+        phone: "92992987"
+    }
+      chai.request(index)
+      .patch('/api/contacts/' + id)
+      .send(contact)
+      .end((err, res) => {
+            res.should.have.status(400);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message').eql('Phone number and/or email already exists')
+        done();
+      });
+    });
+  });
 
+  //Test successful PATCH
+  it('it should PATCH successfully', (done) => {
+    let contact = new Contacts({name: "John", email: "test@gmail.com", gender: "male", phone: "92992987"})
+    let id = contact.id;
+    contact.save((err, contact) => {
+      contact = {
+        name: "John",
+        gender: "male",
+        phone: "92992989"
+    }
+      chai.request(index)
+      .patch('/api/contacts/' + id)
+      .send(contact)
+      .end((err, res) => {
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message').eql('Contact Info updated')
+        done();
+      });
+    });
+  });
+})
 
+/*
+* Test the /DELETE route
+*/
+describe('/DELETE contact', () => {
+  //Test successful Delete
+  it('it should PATCH successfully', (done) => {
+    let contact = new Contacts({name: "John", email: "test@gmail.com", gender: "male", phone: "92992987"})
+    let id = contact.id;
+    contact.save((err, contact) => {
+      chai.request(index)
+      .delete('/api/contacts/' + id)
+      .end((err, res) => {
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.property('message').eql('Contact deleted')
+        done();
+      });
+    });
+  });
+});
 })
