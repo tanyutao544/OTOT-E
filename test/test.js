@@ -167,7 +167,7 @@ describe('/PATCH contact', () => {
 */
 describe('/DELETE contact', () => {
   //Test successful Delete
-  it('it should PATCH successfully', (done) => {
+  it('it should DELETE successfully', (done) => {
     let contact = new Contacts({name: "John", email: "test@gmail.com", gender: "male", phone: "92992987"})
     let id = contact.id;
     contact.save((err, contact) => {

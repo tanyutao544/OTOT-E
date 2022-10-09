@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "SET ENV=test && mocha --timeout 10000"
+    "test": "SET ENV=test && mocha --timeout 10000 --exit"
   },
   "author": "",
   "license": "ISC",
