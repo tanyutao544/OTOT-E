@@ -32,12 +32,12 @@ jobs:
       - name: Beanstalk Deploy for app
         uses: einaregilsson/beanstalk-deploy@v20
         with:
-          aws_access_key: ${{secrets.AWS_ACCESS_KEY}}
-          aws_secret_key: ${{secrets.AWS_SECRET_KEY}}
-          application_name: "react-demo-new"
-          environment_name: "ReactDemoNew-env"
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: "OTOTB-Node-deo"
+          environment_name: "OTOTB-env"
           region: "ap-south-1"
-          version_label: "react-demo-new-${{ steps.format-time.outputs.replaced }}"
+          version_label: "1"
           deployment_package: deploy.zip
 
       - name: Deployed!
