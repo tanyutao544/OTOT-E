@@ -25,3 +25,20 @@ jobs:
         env:
           DATABASE: ${{secrets.DATABASE}}
           TEST_DATABASE: ${{secrets.TEST_DATABASE}}
+
+      - name: Generate deployment package
+        run: zip -r deploy.zip * -x "**node_modules**"
+
+      - name: Beanstalk Deploy for app
+        uses: einaregilsson/beanstalk-deploy@v20
+        with:
+          aws_access_key: ${{secrets.AWS_ACCESS_REACT_KEY_ID}}
+          aws_secret_key: ${{secrets.AWS_SECRET_ACCESS_REACT_KEY}}
+          application_name: "react-demo-new"
+          environment_name: "ReactDemoNew-env"
+          region: "ap-south-1"
+          version_label: "react-demo-new-${{ steps.format-time.outputs.replaced }}"
+          deployment_package: deploy.zip
+
+    - name: Deployed!
+      run: echo App deployed to ELB
