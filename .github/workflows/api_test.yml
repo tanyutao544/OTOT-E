@@ -35,7 +35,7 @@ jobs:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: "OTOT_B_WEBAPP"
-          environment_name: "Ototbwebapp-env"
+          environment_name: "Ototbwebapp-env-2"
           region: "ap-southeast-1"
           version_label: "OTOT_B_WEBAPP${{ steps.format-time.outputs.replaced }}"
           deployment_package: deploy.zip
