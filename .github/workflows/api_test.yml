@@ -14,6 +14,12 @@ jobs:
       matrix:
         node-version: [18.x]
 
+    env:
+          DATABASE: ${{secrets.DATABASE}}
+          TEST_DATABASE: ${{secrets.TEST_DATABASE}}
+          AWS_ACCESS_KEY_ID: ${{secets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js ${{matrix.node-version}}
@@ -22,23 +28,12 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
       - run: npm test
-        env:
-          DATABASE: ${{secrets.DATABASE}}
-          TEST_DATABASE: ${{secrets.TEST_DATABASE}}
-
-      - name: Generate deployment package
-        run: zip -r deploy.zip * -x "**node_modules**"
-
-      - name: Beanstalk Deploy for app
-        uses: einaregilsson/beanstalk-deploy@v20
-        with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: "OTOT_B_WEBAPP"
-          environment_name: "Ototbwebapp-env-2"
-          region: "ap-southeast-1"
-          version_label: "OTOT_B_WEBAPP${{ steps.format-time.outputs.replaced }}"
-          deployment_package: deploy.zip
-
-      - name: Deployed!
-        run: echo App deployed to ELB
+        
+      - name: Install EB CLI
+        run:
+          npm update -g npm
+          npm install aws-cli
+      
+      - name: Deploy to Elasti Beanstalk
+        run:
+          eb deploy
