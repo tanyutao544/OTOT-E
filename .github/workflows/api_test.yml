@@ -43,4 +43,5 @@ jobs:
         
       - name: Deploy to Elasti Beanstalk
         run: |
+          eb init
           eb deploy
