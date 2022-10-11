@@ -32,7 +32,7 @@ jobs:
       - name: Install EB CLI
         run:
           npm update -g npm
-          npm install aws-cli
+          npm install awsclebi
       
       - name: Deploy to Elasti Beanstalk
         run:
