@@ -22,9 +22,9 @@ exports.index = function (req, res) {
 // Handle create contact actions
 exports.new = async function (req, res) {
   var contact = new Contact();
-  if (!(req.body.name && req.body.email)) {
-    return res.status(400).json({ message: 'name and/or email is missing!' });
-  }
+  //   if (!(req.body.name && req.body.email)) {
+  //     return res.status(400).json({ message: 'name and/or email is missing!' });
+  //   }
   if (!re.test(req.body.phone)) {
     return res.status(400).json({ message: 'phone number is wrong format!' });
   }
@@ -50,9 +50,9 @@ exports.new = async function (req, res) {
 };
 // Handle view contact info
 exports.view = function (req, res) {
-  if (!req.params.contact_id) {
-    return err.status(400).json({ message: 'contact_id is missing!' });
-  }
+  //   if (!req.params.contact_id) {
+  //     return err.status(400).json({ message: 'contact_id is missing!' });
+  //   }
   Contact.findById(req.params.contact_id, function (err, contact) {
     if (err) res.send(err);
     res.status(200).json({
