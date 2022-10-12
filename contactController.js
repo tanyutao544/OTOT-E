@@ -62,6 +62,10 @@ exports.view = function (req, res) {
 };
 // Handle update contact info
 exports.update = async function (req, res) {
+  const re = /[6|8|9]\d{7}|\+65[6|8|9]\d{7}|\+65\s[6|8|9]\d{7}/g;
+  if (!re.test(req.body.phone)) {
+    return res.status(400).json({ message: 'phone number is wrong format!' });
+  }
   let exists = await Contact.exists({
     $or: [{ email: req.body.email }, { phone: req.body.phone }],
   });
