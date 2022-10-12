@@ -20,6 +20,10 @@ exports.index = function (req, res) {
 // Handle create contact actions
 exports.new = async function (req, res) {
   var contact = new Contact();
+  const re = /[6|8|9]\d{7}|\+65[6|8|9]\d{7}|\+65\s[6|8|9]\d{7}/g;
+  if (!re.test(req.body.phone)) {
+    return res.status(400).json({ message: 'phone number is wrong format!' });
+  }
   if (!(req.body.name && req.body.email)) {
     return res.status(400).json({ message: 'name and/or email is missing!' });
   }
