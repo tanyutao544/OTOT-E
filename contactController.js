@@ -1,8 +1,6 @@
 // contactController.js
 // Import contact model
 let Contact = require('./contactModel.js');
-
-const re = /[6|8|9]\d{7}|\+65[6|8|9]\d{7}|\+65\s[6|8|9]\d{7}/g;
 // Handle index actions
 exports.index = function (req, res) {
   Contact.get(function (err, contacts) {
@@ -22,11 +20,8 @@ exports.index = function (req, res) {
 // Handle create contact actions
 exports.new = async function (req, res) {
   var contact = new Contact();
-  //   if (!(req.body.name && req.body.email)) {
-  //     return res.status(400).json({ message: 'name and/or email is missing!' });
-  //   }
-  if (!re.test(req.body.phone)) {
-    return res.status(400).json({ message: 'phone number is wrong format!' });
+  if (!(req.body.name && req.body.email)) {
+    return res.status(400).json({ message: 'name and/or email is missing!' });
   }
   let exists = await Contact.exists({
     $or: [{ email: req.body.email }, { phone: req.body.phone }],
@@ -50,9 +45,9 @@ exports.new = async function (req, res) {
 };
 // Handle view contact info
 exports.view = function (req, res) {
-  //   if (!req.params.contact_id) {
-  //     return err.status(400).json({ message: 'contact_id is missing!' });
-  //   }
+  if (!req.params.contact_id) {
+    return err.status(400).json({ message: 'contact_id is missing!' });
+  }
   Contact.findById(req.params.contact_id, function (err, contact) {
     if (err) res.send(err);
     res.status(200).json({
@@ -66,9 +61,6 @@ exports.update = async function (req, res) {
   let exists = await Contact.exists({
     $or: [{ email: req.body.email }, { phone: req.body.phone }],
   });
-  if (!re.test(req.body.phone)) {
-    return res.status(400).json({ message: 'phone number is wrong format!' });
-  }
   if (!exists) {
     Contact.findById(req.params.contact_id, function (err, contact) {
       if (err) res.send(err);
