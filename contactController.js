@@ -22,11 +22,11 @@ exports.index = function (req, res) {
 // Handle create contact actions
 exports.new = async function (req, res) {
   var contact = new Contact();
-  if (!re.test(req.body.phone)) {
-    return res.status(400).json({ message: 'phone number is wrong format!' });
-  }
   if (!(req.body.name && req.body.email)) {
     return res.status(400).json({ message: 'name and/or email is missing!' });
+  }
+  if (!re.test(req.body.phone)) {
+    return res.status(400).json({ message: 'phone number is wrong format!' });
   }
   let exists = await Contact.exists({
     $or: [{ email: req.body.email }, { phone: req.body.phone }],
