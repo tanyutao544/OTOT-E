@@ -22,6 +22,9 @@ exports.index = function (req, res) {
 // Handle create contact actions
 exports.new = async function (req, res) {
   var contact = new Contact();
+  console.log('------------------------------------------');
+  console.log(req.body.phone);
+  console.log(!re.test(req.body.phone));
   if (!re.test(req.body.phone)) {
     return res.status(400).json({ message: 'phone number is wrong format!' });
   }
