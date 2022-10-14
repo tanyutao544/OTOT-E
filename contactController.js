@@ -67,7 +67,7 @@ exports.update = async function (req, res) {
     return res.status(400).json({ message: 'phone number is wrong format!' });
   }
   let otherContacts = Contact.find({_id:{$nin:req.params.contact_id}})
-  let exists = await otherContacts.exists({
+  let exists = await otherContacts.find({
     $or: [{ email: req.body.email }, { phone: req.body.phone }],
   });
   if (exists.length==0) {

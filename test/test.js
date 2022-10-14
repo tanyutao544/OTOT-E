@@ -138,7 +138,7 @@ describe('Contacts', () => {
     it('it should PATCH a contact with same phone field', (done) => {
       let contact = new Contacts({
         name: 'John',
-        email: 'test@gmail.com',
+        email: 'test2@gmail.com',
         gender: 'male',
         phone: '92992987',
       });
