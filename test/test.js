@@ -135,7 +135,7 @@ describe('Contacts', () => {
    */
   describe('/PATCH contact', () => {
     //Test PATCH route with duplicate phone field
-    it('it should not PATCH a contact with duplicate phone field', (done) => {
+    it('it should PATCH a contact with same phone field', (done) => {
       let contact = new Contacts({
         name: 'John',
         email: 'test@gmail.com',
@@ -155,11 +155,11 @@ describe('Contacts', () => {
           .patch('/api/contacts/' + id)
           .send(contact)
           .end((err, res) => {
-            res.should.have.status(400);
+            res.should.have.status(200);
             res.body.should.be.a('object');
             res.body.should.have
               .property('message')
-              .eql('Phone number and/or email already exists');
+              .eql('Contact Info updated');
             done();
           });
       });
@@ -177,6 +177,7 @@ describe('Contacts', () => {
       contact.save((err, contact) => {
         contact = {
           name: 'John',
+          email: 'test2@gmail.com',
           gender: 'male',
           phone: '92992989',
         };
