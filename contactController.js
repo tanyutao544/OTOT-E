@@ -16,31 +16,28 @@ const DEFAULT_EXPIRATION = 3600;
 // Handle index actions
 exports.index = async function (req, res) {
   try {
-    redisClient.get('contacts', async (error, contacts) => {
-      if (error) {
-        console.log(error);
-      }
-      if (contacts != null) {
-        console.log('cache hit');
-        return res.status(200).json({
-          status: 'success',
-          message: 'Contacts retrieved successfully',
-          data: JSON.parse(contacts),
-        });
-      }
-    });
-    let contacts = await Contact.find();
-    await redisClient.setEx(
-      'contacts',
-      DEFAULT_EXPIRATION,
-      JSON.stringify(contacts)
-    );
-    console.log('cache miss');
-    return res.status(200).json({
-      status: 'success',
-      message: 'Contacts retrieved successfully',
-      data: contacts,
-    });
+    let redisContact = await redisClient.get('contacts');
+    if (redisContact != null) {
+      console.log('cache hit');
+      return res.status(200).json({
+        status: 'success',
+        message: 'Contacts retrieved successfully',
+        data: JSON.parse(redisContact),
+      });
+    } else {
+      console.log('cache miss');
+      let contacts = await Contact.find();
+      await redisClient.setEx(
+        'contacts',
+        DEFAULT_EXPIRATION,
+        JSON.stringify(contacts)
+      );
+      return res.status(200).json({
+        status: 'success',
+        message: 'Contacts retrieved successfully',
+        data: contacts,
+      });
+    }
   } catch (err) {
     console.error(err);
   }
