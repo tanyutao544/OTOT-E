@@ -1,29 +1,53 @@
 // contactController.js
 // Import contact model
 let Contact = require('./contactModel.js');
+let Redis = require('redis');
+
+const DEFAULT_EXPIRATION = 3600;
+
+(async () => {
+  redisClient = Redis.createClient();
+
+  redisClient.on('error', (err) => console.log('Redis Client Error', err));
+
+  await redisClient.connect();
+})();
+
 // Handle index actions
-exports.index = function (req, res) {
-  Contact.get(function (err, contacts) {
-    if (err) {
-      res.json({
-        status: 'error',
-        message: err,
-      });
-    }
-    res.status(200).json({
+exports.index = async function (req, res) {
+  try {
+    redisClient.get('contacts', async (error, contacts) => {
+      if (error) {
+        console.log(error);
+      }
+      if (contacts != null) {
+        console.log('cache hit');
+        return res.status(200).json({
+          status: 'success',
+          message: 'Contacts retrieved successfully',
+          data: JSON.parse(contacts),
+        });
+      }
+    });
+    let contacts = await Contact.find();
+    await redisClient.setEx(
+      'contacts',
+      DEFAULT_EXPIRATION,
+      JSON.stringify(contacts)
+    );
+    console.log('cache miss');
+    return res.status(200).json({
       status: 'success',
       message: 'Contacts retrieved successfully',
       data: contacts,
     });
-  });
+  } catch (err) {
+    console.error(err);
+  }
 };
 // Handle create contact actions
 exports.new = async function (req, res) {
   var contact = new Contact();
-  const re = /[6|8|9]\d{7}|\+65[6|8|9]\d{7}|\+65\s[6|8|9]\d{7}/g;
-  if (!re.test(req.body.phone)) {
-    return res.status(400).json({ message: 'phone number is wrong format!' });
-  }
   if (!(req.body.name && req.body.email)) {
     return res.status(400).json({ message: 'name and/or email is missing!' });
   }
@@ -62,15 +86,11 @@ exports.view = function (req, res) {
 };
 // Handle update contact info
 exports.update = async function (req, res) {
-  const re = /[6|8|9]\d{7}|\+65[6|8|9]\d{7}|\+65\s[6|8|9]\d{7}/g;
-  if (!re.test(req.body.phone)) {
-    return res.status(400).json({ message: 'phone number is wrong format!' });
-  }
-  let otherContacts = Contact.find({_id:{$nin:req.params.contact_id}})
+  let otherContacts = Contact.find({ _id: { $nin: req.params.contact_id } });
   let exists = await otherContacts.find({
     $or: [{ email: req.body.email }, { phone: req.body.phone }],
   });
-  if (exists.length==0) {
+  if (exists.length == 0) {
     Contact.findById(req.params.contact_id, function (err, contact) {
       if (err) res.send(err);
       contact.name = req.body.name ? req.body.name : contact.name;
